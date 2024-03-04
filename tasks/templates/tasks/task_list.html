@@ -1,24 +1,43 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Task List</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
 <body>
     <h1>Task List</h1>
-    <!-- <ul>
-        {% for task in tasks %}
-        <li>{{ task.name }} - {{ task.priority }} - {{ task.status }}</li>
-        {% endfor %}       
-    </ul> -->
-    <ul>
-        {% for task in tasks %}
-        <li id="task_{{ task.id }}">{{ task.name }} - {{ task.priority }} - {{ task.status }} 
-            <a href="{% url 'edit_task' pk=task.pk %}">Edit</a>
-            <a href="{% url 'delete_task' pk=task.pk %}">Delete</a>
-        </li>
-        {% endfor %}
-    </ul>    
-    <a href="{% url 'create_task' %}">Create Task</a>
+    <a href="{% url 'create_task' %}">Create New</a> 
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Priority</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for task in tasks %}
+            <tr class="{% if task.priority == 'Low' %}low-priority{% elif task.priority == 'Medium' %}medium-priority{% elif task.priority == 'High' %}high-priority{% endif %} {% if task.status == 'Done' %}completed{% elif task.status == 'Cancelled' %}cancelled{% elif task.status == 'Postponed' %}postponed{% endif %}">
+                <td>{{ task.name }}</td>
+                <td>{{ task.priority }}</td>
+                <td>{{ task.status }}</td>
+                <td>
+                    <form method="get" action="{% url 'edit_task' pk=task.pk %}" style="display: inline;">
+                        <button type="submit" class="btn btn-primary">Edit</button>
+                    </form>
+                    <form method="post" action="{% url 'delete_task' pk=task.pk %}" style="display: inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger">Delete</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+            </form>
+        </tbody>
+    </table>
 </body>
 </html>
